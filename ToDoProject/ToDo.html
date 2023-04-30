@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+
+
+</head>
+
+<body>
+    <div class="container">
+
+        <label for="title">Title</label>
+        <input type="text" id="title">
+
+        <br><br><br>
+
+        <label for="description">description</label><br>
+        <textarea id="description" cols="30" rows="10"></textarea>
+
+        <br><br>
+        <button type="submit" id="add">Add to list</button>
+        <button id="clear" onclick="clearStorage()">Clear list</button>
+
+        <div id="items">
+            <h1>Your Items</h1>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">SrNo</th>
+                        <th scope="col">Item Titel</th>
+                        <th scope="col">Item Description</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tablebody">
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Get some coffee</td>
+                        <td>hellow</td>
+                        <td><button>Delete</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        function getAndUpdate() {
+            console.log("updating List...")
+            til = document.getElementById('title').value;
+            des = document.getElementById('description').value;
+
+            if (localStorage.getItem('itemJson') == null) {
+                itemJsonArr = [];
+                itemJsonArr.push([til, des])
+                localStorage.setItem('itemJson', JSON.stringify(itemJsonArr))
+            }
+            else {
+                itemJsonArrstr = localStorage.getItem('itemJson')
+                itemJsonArr = JSON.parse(itemJsonArrstr);
+                itemJsonArr.push([til, des])
+                localStorage.setItem('itemJson', JSON.stringify(itemJsonArr))
+            }
+            Update();
+        }
+
+
+        function Update() {
+            if (localStorage.getItem('itemJson') == null) {
+                itemJsonArr = [];
+                localStorage.setItem('itemJson', JSON.stringify(itemJsonArr))
+            }
+            else {
+                itemJsonArrstr = localStorage.getItem('itemJson')
+                itemJsonArr = JSON.parse(itemJsonArrstr);
+            }
+            let tablebody = document.getElementById("tablebody")
+            let str = "";
+            itemJsonArr.forEach((elemen, index) => {
+                str += `
+                <tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${elemen[0]}</td>
+                    <td>${elemen[1]}</td>
+                    <td><button onclick="deleted(${index})">Delete</button></td>
+                </tr>
+                `
+            });
+            tablebody.innerHTML = str;
+        }
+
+        add = document.getElementById("add")
+        add.addEventListener("click", getAndUpdate)
+        Update()
+
+        function deleted(itemIndex) {
+            console.log("Delete", itemIndex);
+            itemJsonArrstr = localStorage.getItem('itemJson')
+            itemJsonArr = JSON.parse(itemJsonArrstr)
+
+            itemJsonArr.splice(itemIndex, 1)
+            localStorage.setItem('itemJson', JSON.stringify(itemJsonArr))
+            Update();
+        }
+
+        function clearStorage() {
+            if (confirm("Do you areally want to clear?")) {
+                console.log('Clearing the storage')
+                localStorage.clear();
+                Update()
+            }
+        }
+
+    </script>
+</body>
+
+</html>
